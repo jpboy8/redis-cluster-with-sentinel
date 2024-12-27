@@ -1,0 +1,33 @@
+services:
+  redis-slave-1:
+    ports:
+      - 6379:6379
+    image: redis
+    restart: always
+    container_name: redis-slave-1
+    hostname: redis-slave-1
+    volumes:
+      - redis_data:/data
+    command:
+       [
+        "redis-server",
+        "--appendonly",
+        "yes",
+        "--repl-diskless-load",
+        "on-empty-db",
+        "--replicaof",
+        "redis-master",
+        "6379",
+        "--replica-announce-ip",
+        "${HOST_IP}",
+        "--replica-announce-port",
+        "6379",
+        "--protected-mode",
+        "no"
+       ]
+    extra_hosts:
+      - "redis-master:${MASTER_IP}"
+
+volumes:
+  redis_data:
+    external: true

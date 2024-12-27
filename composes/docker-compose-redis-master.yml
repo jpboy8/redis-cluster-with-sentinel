@@ -1,0 +1,28 @@
+services:
+  redis-master:
+    ports:
+      - 6379:6379
+    image: redis
+    restart: always
+    container_name: redis-master
+    hostname: redis-master
+    volumes:
+      - redis_data:/data
+    command:
+       [
+        "redis-server",
+        "--appendonly",
+        "yes",
+        "--repl-diskless-load",
+        "on-empty-db",
+        "--replica-announce-ip",
+        "${HOST_IP}",
+        "--replica-announce-port",
+        "6381",
+        "--protected-mode",
+        "no"
+       ]
+
+volumes:
+  redis_data:
+    external: true
